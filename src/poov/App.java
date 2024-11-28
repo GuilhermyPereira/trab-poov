@@ -201,7 +201,7 @@ public class App {
                                                             doador.setRh(RH.valueOf(rh.toUpperCase()));
                                                         }
                                                         break;
-                                                    case "6":
+                                                    case "6": 
                                                         System.out.print("Digite a nova situação: ");
                                                         String situacao = scanner.nextLine();
                                                         if (!situacao.equalsIgnoreCase("ativo")
@@ -238,7 +238,33 @@ public class App {
                                 }
                                 break;
                             case 4:
-                                System.out.println("Remover doador...");
+                            try {
+                                factory.abrirConexao();
+                                DoadorDAO dao = factory.criarDoadorDAO();
+                                System.out.println("Digite codigo do doador que será excluido:");
+                                long codigo = scanner.nextLong();
+                                Doador doador = dao.buscarPorCodigo(codigo);
+                                if (doador != null) {
+                                    System.out.println("Você tem certeza que quer excluir o doador?");
+                                    System.out.println(doador);
+                                    System.out.println("Digite S para excluir ou N para não excluir:");
+                                    String resposta = scanner.nextLine();
+                                    resposta = scanner.nextLine();
+                                    if (resposta.equalsIgnoreCase("s")) {
+                                        if (dao.remover(doador)) {
+                                            System.out.println("Doador excluído com sucesso");
+                                        } else {
+                                            System.out.println("Problema ao excluir o doador");
+                                        }
+                                    }
+                                } else {
+                                    System.out.println("Doador não encontrado");
+                                }
+                            } catch (SQLException ex) {
+                                DAOFactory.mostrarSQLException(ex);
+                            } finally {
+                                factory.fecharConexao();
+                            }
                                 break;
                             case 5:
                                 System.out.println("Voltando ao menu principal...");
