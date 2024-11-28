@@ -24,7 +24,7 @@ public class App {
             System.out.println("3 - Sair");
             System.out.print("Opção: ");
             opcaoMenuPrincipal = scanner.nextInt();
-
+            scanner.nextLine(); // Consumir a quebra de linha
             switch (opcaoMenuPrincipal) {
                 case 1:
                     int opcaoDoador;
@@ -37,13 +37,12 @@ public class App {
                         System.out.println("5 - Voltar");
                         System.out.print("Opção: ");
                         opcaoDoador = scanner.nextInt();
-
+                        scanner.nextLine(); // Consumir a quebra de linha
                         switch (opcaoDoador) {
                             case 1:
-                                String nome = scanner.nextLine();
 
                                 System.out.println("Digite o nome do doador: ");
-                                nome = scanner.nextLine();
+                                String nome = scanner.nextLine();
                                 System.out.println("Digite o CPF do doador: ");
                                 String cpf = scanner.nextLine();
                                 System.out.println("Digite o contato do doador: ");
@@ -70,7 +69,7 @@ public class App {
                                     System.out.println("4 - Voltar");
                                     System.out.print("Opção: ");
                                     opcaoPesquisar = scanner.nextInt();
-
+                                    scanner.nextLine(); // Consumir a quebra de linha
                                     switch (opcaoPesquisar) {
                                         case 1:
                                             try {
@@ -95,9 +94,8 @@ public class App {
                                             try {
                                                 factory.abrirConexao();
                                                 DoadorDAO dao = factory.criarDoadorDAO();
-                                                String nome_p = scanner.nextLine();
                                                 System.out.println("Digite o nome (ou parte):");
-                                                nome_p = scanner.nextLine();
+                                                String nome_p = scanner.nextLine();
                                                 List<Doador> doadores = dao.buscarPorNome(nome_p);
                                                 if (!doadores.isEmpty()) {
                                                     System.out.println(doadores);
@@ -117,7 +115,6 @@ public class App {
                                                 DoadorDAO dao = factory.criarDoadorDAO();
                                                 System.out.println("Digite o CPF (ou parte):");
                                                 String CPF = scanner.nextLine();
-                                                CPF = scanner.nextLine();
                                                 List<Doador> doadores = dao.buscaPorCPF(CPF);
                                                 if (!doadores.isEmpty()) {
                                                     System.out.println(doadores);
@@ -145,13 +142,13 @@ public class App {
                                     DoadorDAO dao = factory.criarDoadorDAO();
                                     System.out.println("Digite o codigo do doador a ser alterado:");
                                     Long codigo = scanner.nextLong();
+                                    scanner.nextLine();
                                     Doador doador = dao.buscarPorCodigo(codigo);
                                     if (doador != null) {
                                         System.out.println("Você tem certeza que quer alterar o doador?");
                                         System.out.println(doador);
                                         System.out.println("Digite S para alterar ou N para não alterar:");
                                         String resposta = scanner.nextLine();
-                                        resposta = scanner.nextLine();
                                         if (resposta.equalsIgnoreCase("s")) {
                                             String opcao;
                                             do {

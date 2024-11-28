@@ -67,7 +67,7 @@ public class DoadorDAO {
 
     public Doador buscarPorCodigo(long codigo){
         Doador doador = null;
-        String sql = "SELECT * FROM doador WHERE codigo = ? AND situacao = 'ATIVO'";
+        String sql = "SELECT * FROM doador WHERE codigo = ?";
         try(PreparedStatement pstmt = conexao.prepareStatement(sql)){
             pstmt.setLong(1, codigo);
             try(ResultSet rs = pstmt.executeQuery()){
@@ -80,6 +80,8 @@ public class DoadorDAO {
         }
         return doador;
     }
+
+
 
     public List<Doador> buscaPorCPF (String cpf){
         List<Doador> doadores = new ArrayList<>();
