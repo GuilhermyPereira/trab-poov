@@ -9,6 +9,8 @@ public class Doacao {
     private LocalDate data;
     private LocalTime hora;
     private double volume;
+    private Situacao situacao;
+    private Doador doador;
     public long getCodigo() {
         return codigo;
     }
@@ -35,18 +37,20 @@ public class Doacao {
     }
 
     public Doador getDoador() {
-        return null;
+        return this.doador;
     }
 
     public Doador setDoador(Doador doador) {
+        this.doador = doador;
         return doador;
     }
 
     public Situacao getSituacao() {
-        return Situacao.ATIVO;
+        return situacao;
     }
 
     public Situacao setSituacao(Situacao situacao) {
+        this.situacao = situacao;
         return situacao;
     }
 
