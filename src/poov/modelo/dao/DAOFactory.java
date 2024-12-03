@@ -15,6 +15,14 @@ public class DAOFactory {
         }
     }
 
+    public DoacaoDAO criarDoacaoDAO() {
+        if (conexao == null) {
+            throw new IllegalStateException("Abra uma conexão antes de criar um DAO.");
+        } else {
+            return new DoacaoDAO(conexao);
+        }
+    }
+
     public void abrirConexao() throws SQLException {
         if (conexao == null) {
             conexao = ConexaoFactory.getConexao();

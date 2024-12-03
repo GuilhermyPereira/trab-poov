@@ -1,5 +1,7 @@
 package poov.modelo;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -97,5 +99,16 @@ public class Doacao {
         return "Doacao [codigo=" + codigo + ", data=" + data + ", hora=" + hora + ", volume=" + volume + "]";
     }
 
-        
+    public Doacao(LocalDate data, LocalTime hora, double volume, Situacao situacao, Doador doador) {
+
+        this.data = data;
+
+        this.hora = hora;
+
+        this.volume = volume;
+
+        this.situacao = situacao;
+
+        this.doador = doador;
+    }       
 }
