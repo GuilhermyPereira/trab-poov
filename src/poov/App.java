@@ -30,10 +30,10 @@ public class App {
             scanner.nextLine(); // Consumir a quebra de linha
             switch (opcaoMenuPrincipal) {
                 case 1:
-                    menudoador();
+                    menudoador(scanner);
                     break;
                 case 2:
-                    opcdoacao();
+                    opcdoacao(scanner);
                     break;
                 case 3:
                     System.out.println("Saindo do programa...");
@@ -48,10 +48,8 @@ public class App {
         scanner.close();
     }
 
-    public static final void menudoador() {
+    public static final void menudoador(Scanner scanner) {
         int opcaoDoador;
-        DAOFactory factory = new DAOFactory();
-        Scanner scanner = new Scanner(System.in);
         do {
             System.out.println("\nDoador:");
             System.out.println("1 - Cadastrar");
@@ -64,16 +62,16 @@ public class App {
             scanner.nextLine(); // Consumir a quebra de linha
             switch (opcaoDoador) {
                 case 1:
-                    cadastrardoador();
+                    cadastrardoador(scanner);
                     break;
                 case 2:
-                    opcpesquisar();
+                    opcpesquisar(scanner);
                     break;
                 case 3:
-                    alterardoador();
+                    alterardoador(scanner);
                     break;
                 case 4:
-                    excluirDoador();
+                    excluirDoador(scanner);
                     break;
                 case 5:
                     System.out.println("Voltando ao menu principal...");
@@ -85,9 +83,8 @@ public class App {
         } while (opcaoDoador != 5);
     }
 
-    public static final void cadastrardoador() {
+    public static final void cadastrardoador(Scanner scanner) {
         DAOFactory factory = new DAOFactory();
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Digite o nome do doador: ");
         String nome = scanner.nextLine();
         System.out.println("Digite o CPF do doador: ");
@@ -107,10 +104,9 @@ public class App {
 
     }
 
-    public static final List<Doador> opcpesquisar() {
+    public static final List<Doador> opcpesquisar(Scanner scanner) {
         int opcaoPesquisar;
         DAOFactory factory = new DAOFactory();
-        Scanner scanner = new Scanner(System.in);
         List<Doador> doadores = new ArrayList<>();
         do {
             System.out.println("\nPesquisar:");
@@ -195,9 +191,8 @@ public class App {
 
     }
 
-    public static void alterardoador() {
+    public static void alterardoador(Scanner scanner) {
         DAOFactory factory = new DAOFactory();
-        Scanner scanner = new Scanner(System.in);
         try {
             factory.abrirConexao();
             DoadorDAO dao = factory.criarDoadorDAO();
@@ -296,9 +291,8 @@ public class App {
         }
     }
 
-    public static void excluirDoador() {
+    public static void excluirDoador(Scanner scanner) {
         DAOFactory factory = new DAOFactory();
-        Scanner scanner = new Scanner(System.in);
         try {
             factory.abrirConexao();
             DoadorDAO dao = factory.criarDoadorDAO();
@@ -328,10 +322,8 @@ public class App {
         }
     }
 
-    public static void opcdoacao() {
+    public static void opcdoacao(Scanner scanner) {
         int opcaoDoacao;
-        DAOFactory factory = new DAOFactory();
-        Scanner scanner = new Scanner(System.in);
         do {
             System.out.println("\nDoação:");
             System.out.println("1 - Cadastrar");
@@ -344,10 +336,10 @@ public class App {
             scanner.nextLine(); // Consumir a quebra de linha
             switch (opcaoDoacao) {
                 case 1:
-                    cadastrardoacao();
+                    cadastrardoacao(scanner);
                     break;
                 case 2:
-                    pesquisardoacao();
+                    pesquisardoacao(scanner);
 
                 case 5:
                     System.out.println("Voltando ao menu principal...");
@@ -358,11 +350,10 @@ public class App {
         } while (opcaoDoacao != 5);
     }
 
-    public static void cadastrardoacao() {
+    public static void cadastrardoacao(Scanner scanner) {
         DAOFactory factory = new DAOFactory();
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Pesquisa doador p/ doação");
-        List<Doador> doadores = opcpesquisar();
+        List<Doador> doadores = opcpesquisar(scanner);
         Doador doador = null;
         if (doadores.size() == 0) {
             System.out.println("Doador não encontrado.");
@@ -417,10 +408,9 @@ public class App {
 
     }
 
-    public static final void pesquisardoacao(){
+    public static final void pesquisardoacao(Scanner scanner){
         int opcpesquisa;
         DAOFactory factory = new DAOFactory();
-        Scanner scanner = new Scanner(System.in);
         do{
             System.out.println("\nPesquisar:");
             System.out.println("1 - Pelo código da doação");
@@ -473,6 +463,7 @@ public class App {
                         factory.fecharConexao();
                     }
                     break;
+                case 4:
             
                 default:
                 System.out.println("Opção inválida");

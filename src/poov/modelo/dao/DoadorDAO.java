@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import poov.modelo.Doador;
@@ -55,7 +54,8 @@ public class DoadorDAO {
             pstmt.setString(1, "%" + nome + "%");
             try(ResultSet rs = pstmt.executeQuery()){
                 while(rs.next()){
-                    doador = new Doador(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getBoolean(5), RH.valueOf(rs.getString(6)), TipoSanguineo.valueOf(rs.getString(7)), Situacao.valueOf(rs.getString(8)));
+                    doador = new Doador(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getBoolean(5), 
+                    RH.valueOf(rs.getString(6)), TipoSanguineo.valueOf(rs.getString(7)), Situacao.valueOf(rs.getString(8)));
                     doadores.add(doador);
                 }
             }

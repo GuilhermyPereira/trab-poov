@@ -4,15 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
 import poov.modelo.Doacao;
 import poov.modelo.Doador;
-import poov.modelo.RH;
 import poov.modelo.Situacao;
-import poov.modelo.TipoSanguineo;
 
 public class DoacaoDAO {
 
