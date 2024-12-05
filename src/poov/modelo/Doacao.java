@@ -1,7 +1,6 @@
 package poov.modelo;
 
-import java.sql.Date;
-import java.sql.Time;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 

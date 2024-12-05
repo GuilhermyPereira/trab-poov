@@ -459,6 +459,20 @@ public class App {
                         factory.fecharConexao();
                     }
                     break;
+                case 3:
+                    try{
+                        factory.abrirConexao();
+                        DoacaoDAO dao = factory.criarDoacaoDAO();
+                        scanner.nextLine();
+                        System.out.println("Digite o nome (ou parte):");
+                        String nome = scanner.nextLine();
+                        dao.buscarPorNomeDoador(nome);
+                    } catch (SQLException ex){
+                        DAOFactory.mostrarSQLException(ex);
+                    } finally {
+                        factory.fecharConexao();
+                    }
+                    break;
             
                 default:
                 System.out.println("Opção inválida");
