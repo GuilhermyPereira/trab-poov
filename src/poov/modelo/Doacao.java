@@ -96,7 +96,7 @@ public class Doacao {
     }
     @Override
     public String toString() {
-        return "Doacao [codigo=" + codigo + ", data=" + data + ", hora=" + hora + ", volume=" + volume + "]";
+        return "\n\nDoacao \ncodigo = " + codigo + ", \ndata = " + data + ", \nhora = " + hora + ", \nvolume = " + volume + doador.toString();
     }
 
     public Doacao(LocalDate data, LocalTime hora, double volume, Situacao situacao, Doador doador) {
@@ -111,4 +111,7 @@ public class Doacao {
 
         this.doador = doador;
     }       
+
+    public Doacao() {
+    }
 }

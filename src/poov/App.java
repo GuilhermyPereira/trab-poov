@@ -434,7 +434,30 @@ public class App {
 
             switch (opcpesquisa) {
                 case 1:
-                    
+                    try{
+                        factory.abrirConexao();
+                        DoacaoDAO dao = factory.criarDoacaoDAO();
+                        System.out.println("Digite o código da doação:");
+                        long codigo = scanner.nextLong();
+                        dao.buscarPorCodigo(codigo);
+                    } catch (SQLException ex){
+                        DAOFactory.mostrarSQLException(ex);
+                    } finally {
+                        factory.fecharConexao();
+                    }
+                    break;
+                case 2:
+                    try{
+                        factory.abrirConexao();
+                        DoacaoDAO dao = factory.criarDoacaoDAO();
+                        System.out.println("Digite o código do doador:");
+                        long codigo = scanner.nextLong();
+                        dao.buscarPorCodigoDoador(codigo);
+                    } catch (SQLException ex){
+                        DAOFactory.mostrarSQLException(ex);
+                    } finally {
+                        factory.fecharConexao();
+                    }
                     break;
             
                 default:

@@ -17,6 +17,7 @@ import poov.modelo.TipoSanguineo;
 public class DoacaoDAO {
 
     private final Connection conexao;
+
     public DoacaoDAO(Connection conexao) {
         this.conexao = conexao;
     }
@@ -30,11 +31,11 @@ public class DoacaoDAO {
         pstmt.setString(4, doacao.getSituacao().name());
         pstmt.setLong(5, doacao.getDoador().getCodigo());
         int inseridos = pstmt.executeUpdate();
-        if(inseridos == 1){
+        if (inseridos == 1) {
             ResultSet rs = pstmt.getGeneratedKeys();
-            if(rs.next()){
+            if (rs.next()) {
                 doacao.setCodigo(rs.getLong(1));
-            }else{
+            } else {
                 System.out.println("Não foi possível pegar a chave da doação inserida");
             }
             rs.close();
@@ -44,5 +45,58 @@ public class DoacaoDAO {
 
         pstmt.close();
     }
-    
+
+    public void buscarPorCodigo(long codigo) {
+        String sql = "SELECT * FROM doacao WHERE codigo = ?";
+        try (PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            pstmt.setLong(1, codigo);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                Doacao doacao = new Doacao();
+                doacao.setCodigo(rs.getLong("codigo"));
+                doacao.setData(rs.getDate("data").toLocalDate());
+                doacao.setHora(rs.getTime("hora").toLocalTime());
+                doacao.setVolume(rs.getDouble("volume"));
+                doacao.setSituacao(Situacao.valueOf(rs.getString("situacao")));
+                Doador doadorDAO = new DoadorDAO(conexao).buscarPorCodigo(rs.getLong("cod_doador"));
+                doacao.setDoador(doadorDAO);
+                System.out.println(doacao);
+            } else {
+                System.out.println("Doação não encontrada");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar doação por código: " + e.getMessage());
+        }
+    }
+
+    public void buscarPorCodigoDoador(long codigo) {
+        String sql = "SELECT * FROM doacao WHERE cod_doador = ?";
+        try (PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            pstmt.setLong(1, codigo);
+            List<Doacao> doacoes = new ArrayList<>();
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Doacao doacao = new Doacao();
+                doacao.setCodigo(rs.getLong("codigo"));
+                doacao.setData(rs.getDate("data").toLocalDate());
+                doacao.setHora(rs.getTime("hora").toLocalTime());
+                doacao.setVolume(rs.getDouble("volume"));
+                doacao.setSituacao(Situacao.valueOf(rs.getString("situacao")));
+                Doador doadorDAO = new DoadorDAO(conexao).buscarPorCodigo(rs.getLong("cod_doador"));
+                doacao.setDoador(doadorDAO);
+                System.out.println(doacao);
+                doacoes.add(doacao);
+            }
+            if (doacoes.isEmpty()) {
+                System.out.println("Doações não encontradas");
+            } else {
+                for (Doacao doacao : doacoes) {
+                    System.out.println(doacao);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar doação por código do doador: " + e.getMessage());
+        }
+
+    }
 }
