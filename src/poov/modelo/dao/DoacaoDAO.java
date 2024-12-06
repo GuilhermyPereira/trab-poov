@@ -43,13 +43,13 @@ public class DoacaoDAO {
         pstmt.close();
     }
 
-    public void buscarPorCodigo(long codigo) {
+    public Doacao buscarPorCodigo(long codigo) {
         String sql = "SELECT * FROM doacao WHERE codigo = ?";
+        Doacao doacao = new Doacao();
         try (PreparedStatement pstmt = conexao.prepareStatement(sql)) {
             pstmt.setLong(1, codigo);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                Doacao doacao = new Doacao();
                 doacao.setCodigo(rs.getLong("codigo"));
                 doacao.setData(rs.getDate("data").toLocalDate());
                 doacao.setHora(rs.getTime("hora").toLocalTime());
@@ -60,10 +60,12 @@ public class DoacaoDAO {
                 System.out.println(doacao);
             } else {
                 System.out.println("Doação não encontrada");
+                doacao = null;
             }
         } catch (SQLException e) {
             System.out.println("Erro ao buscar doação por código: " + e.getMessage());
         }
+        return doacao;
     }
 
     public void buscarPorCodigoDoador(long codigo) {

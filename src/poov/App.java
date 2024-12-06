@@ -339,6 +339,9 @@ public class App {
                     break;
                 case 2:
                     pesquisardoacao(scanner);
+                case 3:
+                    alterardoacao(scanner);
+                    break;
 
                 case 5:
                     System.out.println("Voltando ao menu principal...");
@@ -501,4 +504,68 @@ public class App {
             }
         } while (opcpesquisa != 6);
     }
+
+    public static void alterardoacao(Scanner scanner) {
+        DAOFactory factory = new DAOFactory();
+        try {
+            factory.abrirConexao();
+            DoacaoDAO dao = factory.criarDoacaoDAO();
+            System.out.println("Digite o codigo da doação a ser alterada:");
+            Long codigo = scanner.nextLong();
+            Doacao doacao = dao.buscarPorCodigo(codigo);
+            if (doacao != null) {
+                System.out.println("Você tem certeza que quer alterar a doação?");
+                System.out.println(doacao);
+                System.out.println("Digite S para alterar ou N para não alterar:");
+                String resposta = scanner.nextLine();
+                if (resposta.equalsIgnoreCase("s")) {
+                    String opcao;
+                    do {
+                        System.out.println("Alterar");
+                        System.out.println("1 - Data");
+                        System.out.println("2 - Hora");
+                        System.out.println("3 - Volume");
+                        System.out.println("4 - Situação");
+                        System.out.println("5 - Terminar");
+                        System.out.print("Opção: ");
+                        opcao = scanner.nextLine();
+                        switch (opcao) {
+                            case "1":
+                                System.out.print("Digite a nova data: ");
+                                doacao.setData(LocalDate.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                                break;
+                            case "2":
+                                System.out.print("Digite a nova hora: ");
+                                doacao.setHora(LocalTime.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("HH:mm")));
+                                break;
+                            case "3":
+                                System.out.print("Digite o novo volume: ");
+                                doacao.setVolume(scanner.nextDouble());
+                                break;
+                            case "4":
+                                System.out.print("Digite a nova situação: ");
+                                doacao.setSituacao(Situacao.valueOf(scanner.nextLine().toUpperCase()));
+                                break;
+                            case "5":
+                                break;
+                            default:
+                                System.out.println("Opção inválida");
+                        }
+                    } while (!opcao.equals("5"));
+                    // if (dao.atualizar(doacao)) {
+                    //     System.out.println("Alteração efetuada com sucesso");
+                    // } else {
+                    //     System.out.println("Problema ao alterar a doação");
+                    // }
+                }
+            } else {
+                System.out.println("Doação não encontrada");
+            }
+
+        } catch (SQLException ex) {
+            DAOFactory.mostrarSQLException(ex);
+        } finally {
+            factory.fecharConexao();
+        }
+}
 }
