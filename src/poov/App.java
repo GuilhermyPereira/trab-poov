@@ -27,7 +27,7 @@ public class App {
             System.out.println("3 - Sair");
             System.out.print("Opção: ");
             opcaoMenuPrincipal = scanner.nextInt();
-            scanner.nextLine(); // Consumir a quebra de linha
+            scanner.nextLine();
             switch (opcaoMenuPrincipal) {
                 case 1:
                     menudoador(scanner);
@@ -59,7 +59,7 @@ public class App {
             System.out.println("5 - Voltar");
             System.out.print("Opção: ");
             opcaoDoador = scanner.nextInt();
-            scanner.nextLine(); // Consumir a quebra de linha
+            scanner.nextLine();
             switch (opcaoDoador) {
                 case 1:
                     cadastrardoador(scanner);
@@ -116,7 +116,7 @@ public class App {
             System.out.println("4 - Voltar");
             System.out.print("Opção: ");
             opcaoPesquisar = scanner.nextInt();
-            scanner.nextLine(); // Consumir a quebra de linha
+            scanner.nextLine();
             switch (opcaoPesquisar) {
                 case 1:
                     try {
@@ -198,7 +198,6 @@ public class App {
             DoadorDAO dao = factory.criarDoadorDAO();
             System.out.println("Digite o codigo do doador a ser alterado:");
             Long codigo = scanner.nextLong();
-            scanner.nextLine();
             Doador doador = dao.buscarPorCodigo(codigo);
             if (doador != null) {
                 System.out.println("Você tem certeza que quer alterar o doador?");
@@ -333,7 +332,7 @@ public class App {
             System.out.println("5 - Voltar");
             System.out.print("Opção: ");
             opcaoDoacao = scanner.nextInt();
-            scanner.nextLine(); // Consumir a quebra de linha
+            scanner.nextLine();
             switch (opcaoDoacao) {
                 case 1:
                     cadastrardoacao(scanner);
@@ -363,7 +362,6 @@ public class App {
         } else {
             System.out.println("Digite o código do doador: ");
             long codigo = scanner.nextLong();
-            scanner.nextLine();
             doador = null;
             for (Doador d : doadores) {
                 if (d.getCodigo() == codigo) {
@@ -384,8 +382,7 @@ public class App {
             String hora = scanner.nextLine();
             System.out.println("Digite o volume da doação: ");
             double volume = scanner.nextDouble();
-            while (volume <= 0)
-            {
+            while (volume <= 0) {
                 System.out.println("Volume inválido. Digite novamente: ");
                 volume = scanner.nextDouble();
             }
@@ -408,10 +405,10 @@ public class App {
 
     }
 
-    public static final void pesquisardoacao(Scanner scanner){
+    public static final void pesquisardoacao(Scanner scanner) {
         int opcpesquisa;
         DAOFactory factory = new DAOFactory();
-        do{
+        do {
             System.out.println("\nPesquisar:");
             System.out.println("1 - Pelo código da doação");
             System.out.println("2 - Pelo código do doador");
@@ -421,54 +418,87 @@ public class App {
             System.out.println("6 - Voltar");
             System.out.print("Opção: ");
             opcpesquisa = scanner.nextInt();
-
+            scanner.nextLine();
             switch (opcpesquisa) {
                 case 1:
-                    try{
+                    try {
                         factory.abrirConexao();
                         DoacaoDAO dao = factory.criarDoacaoDAO();
                         System.out.println("Digite o código da doação:");
                         long codigo = scanner.nextLong();
                         dao.buscarPorCodigo(codigo);
-                    } catch (SQLException ex){
+                    } catch (SQLException ex) {
                         DAOFactory.mostrarSQLException(ex);
                     } finally {
                         factory.fecharConexao();
                     }
                     break;
                 case 2:
-                    try{
+                    try {
                         factory.abrirConexao();
                         DoacaoDAO dao = factory.criarDoacaoDAO();
                         System.out.println("Digite o código do doador:");
                         long codigo = scanner.nextLong();
                         dao.buscarPorCodigoDoador(codigo);
-                    } catch (SQLException ex){
+                    } catch (SQLException ex) {
                         DAOFactory.mostrarSQLException(ex);
                     } finally {
                         factory.fecharConexao();
                     }
                     break;
                 case 3:
-                    try{
+                    try {
                         factory.abrirConexao();
                         DoacaoDAO dao = factory.criarDoacaoDAO();
-                        scanner.nextLine();
                         System.out.println("Digite o nome (ou parte):");
                         String nome = scanner.nextLine();
                         dao.buscarPorNomeDoador(nome);
-                    } catch (SQLException ex){
+                    } catch (SQLException ex) {
                         DAOFactory.mostrarSQLException(ex);
                     } finally {
                         factory.fecharConexao();
                     }
                     break;
                 case 4:
-            
+                    try {
+                        factory.abrirConexao();
+                        DoacaoDAO dao = factory.criarDoacaoDAO();
+                        System.out.println("Digite o CPF (ou parte):");
+                        String cpf = scanner.nextLine();
+                        dao.buscarPorCPFDoador(cpf);
+                    } catch (SQLException ex) {
+                        DAOFactory.mostrarSQLException(ex);
+                    } finally {
+                        factory.fecharConexao();
+                    }
+                case 5:
+                    try {
+                        factory.abrirConexao();
+                        DoacaoDAO dao = factory.criarDoacaoDAO();
+                        System.out.println("Digite a data inicial das doações (dd/mm/aaaa) ou aperte enter para pegar desde o período inicial:");
+                        String dataI = scanner.nextLine();
+                        if(dataI.isBlank()){
+                            dataI = "01/01/0001";
+                        }
+                        System.out.println("Digite a data final das doações (dd/mm/aaaa) ou aperte enter para pegar até o período final:");
+                        String dataF = scanner.nextLine();
+                        if(dataF.isBlank()){
+                            dataF = "31/12/9999";
+                        }
+                        System.out.println(dataI);
+                        System.out.println(dataF);
+                        dao.buscarPorData(LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy")), LocalDate.parse(dataF, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                    } catch (SQLException ex) {
+                        DAOFactory.mostrarSQLException(ex);
+                    } finally {
+                        factory.fecharConexao();
+                    }
+                    break;
+
                 default:
-                System.out.println("Opção inválida");
+                    System.out.println("Opção inválida");
 
             }
-        }while (opcpesquisa != 6);
+        } while (opcpesquisa != 6);
     }
 }
