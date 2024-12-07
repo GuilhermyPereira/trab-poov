@@ -145,7 +145,7 @@ public class DoacaoDAO {
         }
     }
 
-    public void buscarPorCPFDoador(String cpf){
+    public void buscarPorCPFDoador(String cpf) {
         String sql = "SELECT * FROM doacao WHERE cod_doador = ?";
         try (PreparedStatement pstmt = conexao.prepareStatement(sql)) {
             List<Doador> doadorDAO = new DoadorDAO(conexao).buscaPorCPF(cpf);
@@ -192,34 +192,66 @@ public class DoacaoDAO {
 
     }
 
-        public void buscarPorData (LocalDate dataI, LocalDate dataF){
-            String sql = "SELECT * FROM doacao WHERE data BETWEEN ? AND ?";
-            try (PreparedStatement pstmt = conexao.prepareStatement(sql)) {
-                pstmt.setDate(1, java.sql.Date.valueOf(dataI));
-                pstmt.setDate(2, java.sql.Date.valueOf(dataF));
-                List<Doacao> doacoes = new ArrayList<>();
-                ResultSet rs = pstmt.executeQuery();
-                while (rs.next()) {
-                    Doacao doacao = new Doacao();
-                    doacao.setCodigo(rs.getLong("codigo"));
-                    doacao.setData(rs.getDate("data").toLocalDate());
-                    doacao.setHora(rs.getTime("hora").toLocalTime());
-                    doacao.setVolume(rs.getDouble("volume"));
-                    doacao.setSituacao(Situacao.valueOf(rs.getString("situacao")));
-                    Doador doador = new DoadorDAO(conexao).buscarPorCodigo(rs.getLong("cod_doador"));
-                    doacao.setDoador(doador);
-                    System.out.println(doacao);
-                    doacoes.add(doacao);
-                }
-                if (doacoes.isEmpty()) {
-                    System.out.println("Doações não encontradas");
-                } else {
-                    for (Doacao doacao : doacoes) {
-                        System.out.println(doacao);
-                    }
-                }
-            } catch (SQLException e) {
-                System.out.println("Erro ao buscar doação por data: " + e.getMessage());
+    public void buscarPorData(LocalDate dataI, LocalDate dataF) {
+        String sql = "SELECT * FROM doacao WHERE data BETWEEN ? AND ?";
+        try (PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            pstmt.setDate(1, java.sql.Date.valueOf(dataI));
+            pstmt.setDate(2, java.sql.Date.valueOf(dataF));
+            List<Doacao> doacoes = new ArrayList<>();
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Doacao doacao = new Doacao();
+                doacao.setCodigo(rs.getLong("codigo"));
+                doacao.setData(rs.getDate("data").toLocalDate());
+                doacao.setHora(rs.getTime("hora").toLocalTime());
+                doacao.setVolume(rs.getDouble("volume"));
+                doacao.setSituacao(Situacao.valueOf(rs.getString("situacao")));
+                Doador doador = new DoadorDAO(conexao).buscarPorCodigo(rs.getLong("cod_doador"));
+                doacao.setDoador(doador);
+                System.out.println(doacao);
+                doacoes.add(doacao);
             }
+            if (doacoes.isEmpty()) {
+                System.out.println("Doações não encontradas");
+            } else {
+                for (Doacao doacao : doacoes) {
+                    System.out.println(doacao);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar doação por data: " + e.getMessage());
         }
+    }
+
+    public boolean atualizar(Doacao doacao) {
+        String sql = "UPDATE doacao SET data = ?, hora = ?, volume = ?, situacao = ?, cod_doador = ? WHERE codigo = ?";
+        try (PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            pstmt.setDate(1, java.sql.Date.valueOf(doacao.getData()));
+            pstmt.setTime(2, java.sql.Time.valueOf(doacao.getHora()));
+            pstmt.setDouble(3, doacao.getVolume());
+            pstmt.setString(4, doacao.getSituacao().name());
+            pstmt.setLong(5, doacao.getDoador().getCodigo());
+            pstmt.setLong(6, doacao.getCodigo());
+            if (doacao.getSituacao() == Situacao.INATIVO) {
+                Doador doador = new DoadorDAO(conexao).buscarPorCodigo((doacao.getDoador().getCodigo()));
+                if (doador != null) {
+                    doador.setSituacao(Situacao.INATIVO);
+                    new DoadorDAO(conexao).atualizar(doador);
+                }
+                
+    
+            }
+            int atualizados = pstmt.executeUpdate();
+            if (atualizados == 1) {
+                System.out.println("Doação atualizada com sucesso");
+                return true;
+            } else {
+                System.out.println("Doação não atualizada");
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar doação: " + e.getMessage());
+        }
+        return false;
+    }
 }

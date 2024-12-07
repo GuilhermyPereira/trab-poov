@@ -198,6 +198,7 @@ public class App {
             DoadorDAO dao = factory.criarDoadorDAO();
             System.out.println("Digite o codigo do doador a ser alterado:");
             Long codigo = scanner.nextLong();
+            scanner.nextLine();
             Doador doador = dao.buscarPorCodigo(codigo);
             if (doador != null) {
                 System.out.println("Você tem certeza que quer alterar o doador?");
@@ -342,7 +343,9 @@ public class App {
                 case 3:
                     alterardoacao(scanner);
                     break;
-
+                case 4:
+                    removerdoacao(scanner);
+                    break;
                 case 5:
                     System.out.println("Voltando ao menu principal...");
                     break;
@@ -478,19 +481,39 @@ public class App {
                     try {
                         factory.abrirConexao();
                         DoacaoDAO dao = factory.criarDoacaoDAO();
-                        System.out.println("Digite a data inicial das doações (dd/mm/aaaa) ou aperte enter para pegar desde o período inicial:");
+                        System.out.println(
+                                "Digite a data inicial das doações (dd/mm/aaaa) ou aperte enter para pegar desde o período inicial:");
                         String dataI = scanner.nextLine();
-                        if(dataI.isBlank()){
+                        if (dataI.isBlank()) {
                             dataI = "01/01/0001";
                         }
-                        System.out.println("Digite a data final das doações (dd/mm/aaaa) ou aperte enter para pegar até o período final:");
+                        System.out.println(
+                                "Digite a data final das doações (dd/mm/aaaa) ou aperte enter para pegar até o período final:");
                         String dataF = scanner.nextLine();
-                        if(dataF.isBlank()){
+                        if (dataF.isBlank()) {
                             dataF = "31/12/9999";
                         }
-                        System.out.println(dataI);
-                        System.out.println(dataF);
-                        dao.buscarPorData(LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy")), LocalDate.parse(dataF, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+                        if (LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                .isAfter(LocalDate.parse(dataF, DateTimeFormatter.ofPattern("dd/MM/yyyy")))) {
+                            System.out.println("Data inicial maior que a data final");
+                            System.out.println("Deseja inverter as datas?");
+                            System.out.println("Digite S para sim e N para não");
+                            String resposta = scanner.nextLine();
+                            if (resposta.equalsIgnoreCase("s")) {
+                                String aux = dataI;
+                                dataI = dataF;
+                                dataF = aux;
+                            } else {
+                                System.out.println("Busca cancelada");
+                            }
+                        }
+
+                        if (LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                .isBefore(LocalDate.parse(dataF, DateTimeFormatter.ofPattern("dd/MM/yyyy")))) {
+                            dao.buscarPorData(LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                                    LocalDate.parse(dataF, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                        }
                     } catch (SQLException ex) {
                         DAOFactory.mostrarSQLException(ex);
                     } finally {
@@ -505,6 +528,7 @@ public class App {
         } while (opcpesquisa != 6);
     }
 
+
     public static void alterardoacao(Scanner scanner) {
         DAOFactory factory = new DAOFactory();
         try {
@@ -512,6 +536,7 @@ public class App {
             DoacaoDAO dao = factory.criarDoacaoDAO();
             System.out.println("Digite o codigo da doação a ser alterada:");
             Long codigo = scanner.nextLong();
+            scanner.nextLine();
             Doacao doacao = dao.buscarPorCodigo(codigo);
             if (doacao != null) {
                 System.out.println("Você tem certeza que quer alterar a doação?");
@@ -532,11 +557,13 @@ public class App {
                         switch (opcao) {
                             case "1":
                                 System.out.print("Digite a nova data: ");
-                                doacao.setData(LocalDate.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                                doacao.setData(
+                                        LocalDate.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                                 break;
                             case "2":
                                 System.out.print("Digite a nova hora: ");
-                                doacao.setHora(LocalTime.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("HH:mm")));
+                                doacao.setHora(
+                                        LocalTime.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("HH:mm")));
                                 break;
                             case "3":
                                 System.out.print("Digite o novo volume: ");
@@ -552,20 +579,52 @@ public class App {
                                 System.out.println("Opção inválida");
                         }
                     } while (!opcao.equals("5"));
-                    // if (dao.atualizar(doacao)) {
-                    //     System.out.println("Alteração efetuada com sucesso");
-                    // } else {
-                    //     System.out.println("Problema ao alterar a doação");
-                    // }
+                    if (dao.atualizar(doacao)) {
+                        System.out.println("Alteração efetuada com sucesso");
+                    } else {
+                        System.out.println("Problema ao alterar a doação");
                 }
             } else {
                 System.out.println("Doação não encontrada");
             }
-
+        } else {
+            System.out.println("Alteração cancelada.");
+        }
         } catch (SQLException ex) {
             DAOFactory.mostrarSQLException(ex);
         } finally {
             factory.fecharConexao();
         }
-}
+    }
+
+    public static void removerdoacao(Scanner scanner) {
+        DAOFactory factory = new DAOFactory();
+        try {
+            factory.abrirConexao();
+            DoacaoDAO dao = factory.criarDoacaoDAO();
+            System.out.println("Digite codigo da doação que será excluida:");
+            long codigo = scanner.nextLong();
+            Doacao doacao = dao.buscarPorCodigo(codigo);
+            if (doacao != null) {
+                System.out.println("Você tem certeza que quer excluir a doação?");
+                System.out.println(doacao);
+                System.out.println("Digite S para excluir ou N para não excluir:");
+                String resposta = scanner.nextLine();
+                resposta = scanner.nextLine();
+                if (resposta.equalsIgnoreCase("s")) {
+                    if (dao.remover(doacao)) {
+                        System.out.println("Doação excluída com sucesso");
+                    } else {
+                        System.out.println("Problema ao excluir a doação");
+                    }
+                }
+            } else {
+                System.out.println("Doação não encontrada");
+            }
+        } catch (SQLException ex) {
+            DAOFactory.mostrarSQLException(ex);
+        } finally {
+            factory.fecharConexao();
+        }
+    }
 }
