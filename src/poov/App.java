@@ -568,11 +568,28 @@ public class App {
                                 break;
                             case "3":
                                 System.out.print("Digite o novo volume: ");
-                                doacao.setVolume(scanner.nextDouble());
+                                Double volume = scanner.nextDouble();
+                                if(volume <= 0){
+                                    System.out.println("Volume inválido. Voltando ao menu anterior.");
+                                }
+                                else{
+                                    doacao.setVolume(volume);
+                                }
+                                
                                 break;
                             case "4":
-                                System.out.print("Digite a nova situação: ");
-                                doacao.setSituacao(Situacao.valueOf(scanner.nextLine().toUpperCase()));
+                                System.out.print("Digite a nova situação (Ativo ou Inativo): ");
+                                String situacao = scanner.nextLine();
+                                if(situacao.equalsIgnoreCase("ativo")){
+                                    doacao.setSituacao(Situacao.ATIVO);
+                                }
+                                else if(situacao.equalsIgnoreCase("inativo")){
+                                    doacao.setSituacao(Situacao.INATIVO);
+                                  
+                                }
+                                else{
+                                    System.out.println("Situação inválida. Voltando ao menu anterior.");
+                                }
                                 break;
                             case "5":
                                 break;
