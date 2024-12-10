@@ -484,36 +484,37 @@ public class App {
                         System.out.println(
                                 "Digite a data inicial das doações (dd/mm/aaaa) ou aperte enter para pegar desde o período inicial:");
                         String dataI = scanner.nextLine();
-                        if (dataI.isBlank()) {
-                            dataI = "01/01/0001";
-                        }
                         System.out.println(
                                 "Digite a data final das doações (dd/mm/aaaa) ou aperte enter para pegar até o período final:");
                         String dataF = scanner.nextLine();
-                        if (dataF.isBlank()) {
-                            dataF = "31/12/9999";
-                        }
-
                         if (LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                                 .isAfter(LocalDate.parse(dataF, DateTimeFormatter.ofPattern("dd/MM/yyyy")))) {
-                            System.out.println("Data inicial maior que a data final");
+                            System.out.println("Data inicial após a data final");
                             System.out.println("Deseja inverter as datas?");
-                            System.out.println("Digite S para sim e N para não");
+                            System.out.println("Digite S para sim ou N para não");
                             String resposta = scanner.nextLine();
                             if (resposta.equalsIgnoreCase("s")) {
                                 String aux = dataI;
                                 dataI = dataF;
                                 dataF = aux;
-                            } else {
-                                System.out.println("Busca cancelada");
                             }
                         }
 
-                        if (LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                        if (dataI.isBlank() && !dataF.isBlank()) {
+                            dao.buscarPorDataSemInicial(
+                                    LocalDate.parse(dataF, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                        } else if (dataF.isBlank() && !dataI.isBlank()) {
+                            dao.buscarPorDataSemFinal(
+                                    LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                        } else if (LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                                 .isBefore(LocalDate.parse(dataF, DateTimeFormatter.ofPattern("dd/MM/yyyy")))) {
                             dao.buscarPorData(LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                                     LocalDate.parse(dataF, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                         }
+                        else{
+                            System.out.println("Datas inválidas");
+                        }
+
                     } catch (SQLException ex) {
                         DAOFactory.mostrarSQLException(ex);
                     } finally {
@@ -526,8 +527,8 @@ public class App {
 
             }
         } while (opcpesquisa != 6);
-    }
 
+    }
 
     public static void alterardoacao(Scanner scanner) {
         DAOFactory factory = new DAOFactory();
@@ -583,13 +584,13 @@ public class App {
                         System.out.println("Alteração efetuada com sucesso");
                     } else {
                         System.out.println("Problema ao alterar a doação");
+                    }
+                } else {
+                    System.out.println("Doação não encontrada");
                 }
             } else {
-                System.out.println("Doação não encontrada");
+                System.out.println("Alteração cancelada.");
             }
-        } else {
-            System.out.println("Alteração cancelada.");
-        }
         } catch (SQLException ex) {
             DAOFactory.mostrarSQLException(ex);
         } finally {
