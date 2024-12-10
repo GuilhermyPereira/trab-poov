@@ -487,7 +487,7 @@ public class App {
                         System.out.println(
                                 "Digite a data final das doações (dd/mm/aaaa) ou aperte enter para pegar até o período final:");
                         String dataF = scanner.nextLine();
-                        if (LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                        if (!dataI.isBlank() && !dataF.isBlank() && LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                                 .isAfter(LocalDate.parse(dataF, DateTimeFormatter.ofPattern("dd/MM/yyyy")))) {
                             System.out.println("Data inicial após a data final");
                             System.out.println("Deseja inverter as datas?");
@@ -506,12 +506,14 @@ public class App {
                         } else if (dataF.isBlank() && !dataI.isBlank()) {
                             dao.buscarPorDataSemFinal(
                                     LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                        } else if (dataI.isBlank() && dataF.isBlank()) {
+                            System.out.println("Buscando por todo o período");
+                            dao.buscarPorTodoPeriodo();
                         } else if (LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                                 .isBefore(LocalDate.parse(dataF, DateTimeFormatter.ofPattern("dd/MM/yyyy")))) {
                             dao.buscarPorData(LocalDate.parse(dataI, DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                                     LocalDate.parse(dataF, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                        }
-                        else{
+                        } else {
                             System.out.println("Datas inválidas");
                         }
 
@@ -569,25 +571,22 @@ public class App {
                             case "3":
                                 System.out.print("Digite o novo volume: ");
                                 Double volume = scanner.nextDouble();
-                                if(volume <= 0){
+                                if (volume <= 0) {
                                     System.out.println("Volume inválido. Voltando ao menu anterior.");
-                                }
-                                else{
+                                } else {
                                     doacao.setVolume(volume);
                                 }
-                                
+
                                 break;
                             case "4":
                                 System.out.print("Digite a nova situação (Ativo ou Inativo): ");
                                 String situacao = scanner.nextLine();
-                                if(situacao.equalsIgnoreCase("ativo")){
+                                if (situacao.equalsIgnoreCase("ativo")) {
                                     doacao.setSituacao(Situacao.ATIVO);
-                                }
-                                else if(situacao.equalsIgnoreCase("inativo")){
+                                } else if (situacao.equalsIgnoreCase("inativo")) {
                                     doacao.setSituacao(Situacao.INATIVO);
-                                  
-                                }
-                                else{
+
+                                } else {
                                     System.out.println("Situação inválida. Voltando ao menu anterior.");
                                 }
                                 break;

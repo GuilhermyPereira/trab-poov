@@ -138,7 +138,7 @@ public class Doador {
 
         @Override
         public String toString() {
-            return "\n\nCodigo = " + codigo + ", \nnome = " + nome + ", \ncpf = " + cpf + ", \ncontato = " + contato + ", \ntipoERHCorretos = " + tipoERHCorretos + ", \nrh = " + rh + ", \ntipoSanguineo = " + tipoSanguineo + ", \nsituacao = " + situacao;
+            return "\n\nDoador\nCodigo = " + codigo + ", \nnome = " + nome + ", \ncpf = " + cpf + ", \ncontato = " + contato + ", \ntipoERHCorretos = " + tipoERHCorretos + ", \nrh = " + rh + ", \ntipoSanguineo = " + tipoSanguineo + ", \nsituacao = " + situacao;
         }
 
         public Doador() {

@@ -223,6 +223,94 @@ public class DoacaoDAO {
         }
     }
 
+    public void buscarPorDataSemInicial(LocalDate dataF) {
+        String sql = "SELECT * FROM doacao WHERE data IS BEFORE ?";
+        try (PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            pstmt.setDate(1, java.sql.Date.valueOf(dataF));
+            List<Doacao> doacoes = new ArrayList<>();
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Doacao doacao = new Doacao();
+                doacao.setCodigo(rs.getLong("codigo"));
+                doacao.setData(rs.getDate("data").toLocalDate());
+                doacao.setHora(rs.getTime("hora").toLocalTime());
+                doacao.setVolume(rs.getDouble("volume"));
+                doacao.setSituacao(Situacao.valueOf(rs.getString("situacao")));
+                Doador doador = new DoadorDAO(conexao).buscarPorCodigo(rs.getLong("cod_doador"));
+                doacao.setDoador(doador);
+                System.out.println(doacao);
+                doacoes.add(doacao);
+            }
+            if (doacoes.isEmpty()) {
+                System.out.println("Doações não encontradas");
+            } else {
+                for (Doacao doacao : doacoes) {
+                    System.out.println(doacao);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar doação por data: " + e.getMessage());
+        }
+    }
+
+    public void buscarPorDataSemFinal (LocalDate dataI) {
+        String sql = "SELECT * FROM doacao WHERE data IS AFTER ?";
+        try (PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            pstmt.setDate(1, java.sql.Date.valueOf(dataI));
+            List<Doacao> doacoes = new ArrayList<>();
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Doacao doacao = new Doacao();
+                doacao.setCodigo(rs.getLong("codigo"));
+                doacao.setData(rs.getDate("data").toLocalDate());
+                doacao.setHora(rs.getTime("hora").toLocalTime());
+                doacao.setVolume(rs.getDouble("volume"));
+                doacao.setSituacao(Situacao.valueOf(rs.getString("situacao")));
+                Doador doador = new DoadorDAO(conexao).buscarPorCodigo(rs.getLong("cod_doador"));
+                doacao.setDoador(doador);
+                System.out.println(doacao);
+                doacoes.add(doacao);
+            }
+            if (doacoes.isEmpty()) {
+                System.out.println("Doações não encontradas");
+            } else {
+                for (Doacao doacao : doacoes) {
+                    System.out.println(doacao);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar doação por data: " + e.getMessage());
+        }
+    }
+
+    public void buscarPorTodoPeriodo() {
+        String sql = "SELECT * FROM doacao ORDER BY data ASC";
+        try (PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            List<Doacao> doacoes = new ArrayList<>();
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Doacao doacao = new Doacao();
+                doacao.setCodigo(rs.getLong("codigo"));
+                doacao.setData(rs.getDate("data").toLocalDate());
+                doacao.setHora(rs.getTime("hora").toLocalTime());
+                doacao.setVolume(rs.getDouble("volume"));
+                doacao.setSituacao(Situacao.valueOf(rs.getString("situacao")));
+                Doador doador = new DoadorDAO(conexao).buscarPorCodigo(rs.getLong("cod_doador"));
+                doacao.setDoador(doador);
+                doacoes.add(doacao);
+            }
+            if (doacoes.isEmpty()) {
+                System.out.println("Doações não encontradas");
+            } else {
+                for (Doacao doacao : doacoes) {
+                    System.out.println(doacao);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar doação por data: " + e.getMessage());
+        }
+    }
+
     public boolean atualizar(Doacao doacao) {
         String sql = "UPDATE doacao SET data = ?, hora = ?, volume = ?, situacao = ?, cod_doador = ? WHERE codigo = ?";
         try (PreparedStatement pstmt = conexao.prepareStatement(sql)) {
@@ -251,6 +339,24 @@ public class DoacaoDAO {
             }
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar doação: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean remover(Doacao doacao) {
+        String sql = "DELETE FROM doacao WHERE codigo = ?";
+        try (PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            pstmt.setLong(1, doacao.getCodigo());
+            int excluidos = pstmt.executeUpdate();
+            if (excluidos == 1) {
+                System.out.println("Doação excluída com sucesso");
+                return true;
+            } else {
+                System.out.println("Doação não excluída");
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao excluir doação: " + e.getMessage());
         }
         return false;
     }
